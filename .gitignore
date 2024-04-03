@@ -134,5 +134,5 @@ dmypy.json
 
 *.sh
 
-# Models
+# pytorch weights files
 *.th
