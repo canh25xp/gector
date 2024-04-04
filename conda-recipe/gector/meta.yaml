@@ -1,7 +1,7 @@
 {% set data = load_setup_py_data() %}
 
 package:
-  name: gector-gpu
+  name: gector
   version: {{ data.get('version') }}
 
 source:
@@ -20,8 +20,7 @@ requirements:
   run:
     - python>=3.8
     - allennlp>=2.10
-    - pytorch-gpu
-    - cudatoolkit>=11.0
+    - pytorch
     - python-Levenshtein
     - scikit-learn
     - tokenizers>=0.11.1,!=0.11.3,<0.13
