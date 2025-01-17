@@ -71,7 +71,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--vocab_path",
         help="Path to the model file.",
-        default="data/output_vocabulary",  # to use pretrained models
+        default="test_fixtures/roberta_model/vocabulary",  # to use pretrained models
     )
     parser.add_argument(
         "--input_file", help="Path to the evalset file", required=True
