@@ -133,3 +133,9 @@ dmypy.json
 .idea
 
 *.sh
+
+# pytorch weights files
+*.th
+
+# Lock files
+*.lock

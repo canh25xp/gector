@@ -1,0 +1,12 @@
+name: gector_dev
+dependencies:
+  - python=3.8
+  - pytorch=1.10.0
+  - python-Levenshtein
+  - transformers
+  - scikit-learn
+  - sentencepiece
+  - overrides=4.1.2
+  - numpy
+  - allennlp>=2.10
+
