@@ -7,11 +7,8 @@ indent-style = "space"
 
 #https://microsoft.github.io/pyright/#/configuration?id=sample-pyprojecttoml-file
 [tool.pyright]
-exclude = [
-  "**/__pycache__",
-]
-extraPaths = [
-]
+exclude = ["**/__pycache__"]
+extraPaths = []
 typeCheckingMode = "basic"
 reportMissingImports = true
 reportMissingTypeStubs = false
