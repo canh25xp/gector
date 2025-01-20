@@ -48,7 +48,7 @@ def load_for_demo(use_roberta=True):
         min_error_prob = 0.66
         confidence_bias = 0.35
     vocab_path = os.path.join(
-        os.path.dirname(__file__), "data", "output_vocabulary", ""
+        os.path.dirname(__file__), "test_fixtures/roberta_model/vocabulary"
     )
     model = GecBERTModel(
         vocab_path=vocab_path,
