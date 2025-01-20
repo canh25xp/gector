@@ -6,3 +6,7 @@ scikit-learn==0.20.0
 sentencepiece==0.1.95
 overrides==4.1.2
 numpy==1.19.5
+
+# For API uses
+Flask==2.0.3
+Flask-RESTful==0.3.9
