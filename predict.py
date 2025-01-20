@@ -184,13 +184,13 @@ if __name__ == "__main__":
         "--additional_confidence",
         type=float,
         help="How many probability to add to $KEEP token.",
-        default=0,
+        default=0.0,
     )
     parser.add_argument(
         "--additional_del_confidence",
         type=float,
         help="How many probability to add to $DELETE token.",
-        default=0,
+        default=0.0,
     )
     parser.add_argument(
         "--min_error_probability",
