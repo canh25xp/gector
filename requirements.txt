@@ -5,8 +5,11 @@ transformers
 scikit-learn
 sentencepiece
 overrides
-numpy
+numpy==1.26.4
 
 # For API uses
 Flask>=2.0.3
 Flask-RESTful>=0.3.9
+
+# For Gradio demo
+gradio>=3.20.1
