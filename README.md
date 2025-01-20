@@ -103,6 +103,16 @@ Among parameters:
 
 For evaluation use [M^2Scorer](https://github.com/nusnlp/m2scorer) and [ERRANT](https://github.com/chrisjbryant/errant).
 
+## Test the API with Curl
+```bash
+# Start API
+python api.py
+
+curl -X POST -H "Content-Type: application/json" -d '{"model": "GECToR-Roberta", "text_input_list": ["He do this", "I is a engineer"]}' http://localhost:3000/components/model
+# Or
+curl -X POST -H "Content-Type: application/json" -d @request.json http://localhost:3000/components/model
+```
+
 ## Text Simplification
 This repository also implements the code of the following paper:
 > [Text Simplification by Tagging](https://aclanthology.org/2021.bea-1.2/) <br>
