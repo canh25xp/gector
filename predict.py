@@ -3,6 +3,7 @@ import os
 
 from gector.utils.helpers import read_lines, normalize
 from gector.gec_model import GecBERTModel
+from huggingface_hub import hf_hub_download
 
 
 def predict_for_file(
@@ -34,24 +35,28 @@ def predict_for_file(
 
 
 def load_for_demo(use_roberta=True):
-    model_path = os.path.join(os.path.dirname(__file__), "models")
+    roberta_path = hf_hub_download(
+        repo_id="canh25xp/GECToR-Roberta",
+        filename="roberta_1_gectorv2.th",
+        cache_dir=".cache",
+    )
+    xlnet_path = "xlnet_0_gector.th"
+    print(f"roberta_path: {roberta_path}")
     if use_roberta:
-        model_path = os.path.join(model_path, "roberta_1_gectorv2.th")
+        model_path = roberta_path
         transformer_model = "roberta"
         special_tokens_fix = 1
         min_error_prob = 0.50
         confidence_bias = 0.20
     else:
-        model_path = os.path.join(model_path, "xlnet_0_gector.th")
+        model_path = xlnet_path
         transformer_model = "xlnet"
         special_tokens_fix = 0
         min_error_prob = 0.66
         confidence_bias = 0.35
-    vocab_path = os.path.join(
-        os.path.dirname(__file__), "test_fixtures/roberta_model/vocabulary"
-    )
+
     model = GecBERTModel(
-        vocab_path=vocab_path,
+        vocab_path="test_fixtures/roberta_model/vocabulary",
         model_paths=[model_path],
         max_len=50,
         min_len=3,
