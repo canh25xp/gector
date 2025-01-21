@@ -6,11 +6,16 @@ from json import dumps
 
 
 def load(model_path, transformer_model):
-    special_tokens_fix = 1
-    min_error_prob = 0.50
-    confidence_bias = 0.20
+    if transformer_model == "roberta":
+        special_tokens_fix = 1
+        min_error_prob = 0.50
+        confidence_bias = 0.20
+    elif transformer_model == "xlnet":
+        special_tokens_fix = 0
+        min_error_prob = 0.66
+        confidence_bias = 0.35
 
-    return GecBERTModel(
+    model = GecBERTModel(
         vocab_path="test_fixtures/roberta_model/vocabulary",
         model_paths=[model_path],
         max_len=50,
@@ -23,6 +28,7 @@ def load(model_path, transformer_model):
         log=False,
         confidence=confidence_bias,
     )
+    return model
 
 
 def predict(lines, model, batch_size=32):
