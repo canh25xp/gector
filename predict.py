@@ -1,9 +1,6 @@
 import argparse
-import os
-
 from gector.utils.helpers import read_lines, normalize
 from gector.gec_model import GecBERTModel
-from huggingface_hub import hf_hub_download
 
 
 def predict_for_file(
@@ -32,63 +29,6 @@ def predict_for_file(
     with open(output_file, "w") as f:
         f.write("\n".join(result_lines) + "\n")
     return cnt_corrections
-
-
-def load_for_demo(use_roberta=True):
-    roberta_path = hf_hub_download(
-        repo_id="canh25xp/GECToR-Roberta",
-        filename="roberta_1_gectorv2.th",
-        cache_dir=".cache",
-    )
-    xlnet_path = "xlnet_0_gector.th"
-    print(f"roberta_path: {roberta_path}")
-    if use_roberta:
-        model_path = roberta_path
-        transformer_model = "roberta"
-        special_tokens_fix = 1
-        min_error_prob = 0.50
-        confidence_bias = 0.20
-    else:
-        model_path = xlnet_path
-        transformer_model = "xlnet"
-        special_tokens_fix = 0
-        min_error_prob = 0.66
-        confidence_bias = 0.35
-
-    model = GecBERTModel(
-        vocab_path="test_fixtures/roberta_model/vocabulary",
-        model_paths=[model_path],
-        max_len=50,
-        min_len=3,
-        iterations=5,
-        min_error_probability=min_error_prob,
-        lowercase_tokens=False,
-        model_name=transformer_model,
-        special_tokens_fix=special_tokens_fix,
-        log=False,
-        confidence=confidence_bias,
-    )
-    return model
-
-
-# inference for demo
-def predict_for_demo(lines, model, batch_size=32):
-    test_data = [s.strip() for s in lines]
-    predictions = []
-    batch = []
-    for sent in test_data:
-        batch.append(sent.split())
-        if len(batch) == batch_size:
-            preds, cnt = model.handle_batch(batch)
-            predictions.extend(preds)
-            batch = []
-    if batch:
-        preds, cnt = model.handle_batch(batch)
-        predictions.extend(preds)
-
-    # output = '<eos>'.join([' '.join(x) for x in predictions])
-    output = [" ".join(x) for x in predictions]
-    return output
 
 
 def main(args):
