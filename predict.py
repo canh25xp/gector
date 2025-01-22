@@ -3,9 +3,7 @@ from gector.utils.helpers import read_lines, normalize
 from gector.gec_model import GecBERTModel
 
 
-def predict_for_file(
-    input_file, output_file, model, batch_size=32, to_normalize=False
-):
+def predict_for_file(input_file, output_file, model, batch_size=32, to_normalize=False):
     test_data = read_lines(input_file)
     predictions = []
     cnt_corrections = 0
@@ -68,31 +66,24 @@ def main(args):
 if __name__ == "__main__":
     # read parameters
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--model_path", help="Path to the model file.", nargs="+", required=True
-    )
+    parser.add_argument("--model_path", help="Path to the model file.", nargs="+", required=True)
     parser.add_argument(
         "--vocab_path",
         help="Path to the model file.",
         default="test_fixtures/roberta_model/vocabulary",  # to use pretrained models
     )
-    parser.add_argument(
-        "--input_file", help="Path to the evalset file", required=True
-    )
-    parser.add_argument(
-        "--output_file", help="Path to the output file", default=None
-    )
+    parser.add_argument("--input_file", help="Path to the evalset file", required=True)
+    parser.add_argument("--output_file", help="Path to the output file", default=None)
     parser.add_argument(
         "--max_len",
         type=int,
-        help="The max sentence length" "(all longer will be truncated)",
+        help="The max sentence length (all longer will be truncated)",
         default=50,
     )
     parser.add_argument(
         "--min_len",
         type=int,
-        help="The minimum sentence length"
-        "(all longer will be returned w/o changes)",
+        help="The minimum sentence length (all longer will be returned w/o changes)",
         default=3,
     )
     parser.add_argument(
@@ -155,17 +146,13 @@ if __name__ == "__main__":
         "For reproducing reported results it should be 0 for BERT/XLNet and 1 for RoBERTa.",
         default=1,
     )
-    parser.add_argument(
-        "--is_ensemble", type=int, help="Whether to do ensembling.", default=0
-    )
+    parser.add_argument("--is_ensemble", type=int, help="Whether to do ensembling.", default=0)
     parser.add_argument(
         "--weights",
         help="Used to calculate weighted average",
         nargs="+",
         default=None,
     )
-    parser.add_argument(
-        "--normalize", help="Use for text simplification.", action="store_true"
-    )
+    parser.add_argument("--normalize", help="Use for text simplification.", action="store_true")
     args = parser.parse_args()
     main(args)
