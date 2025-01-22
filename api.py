@@ -68,7 +68,10 @@ class MODEL(Resource):
         json_data = request.get_json(force=True)
         model = json_data["model"]
         input = json_data["text_input_list"]
-        print(dumps(json_data, indent=4, sort_keys=True))
+
+        print("================================================================================")
+        print("Request:", dumps(json_data, indent=2, sort_keys=True))
+
         if model == "GECToR-Roberta":
             output = predict(input, model_gector_roberta)
         elif model == "GECToR-XLNet":
@@ -87,7 +90,8 @@ class MODEL(Resource):
         )
         # fmt: on
 
-        print(dumps(output_json.json, indent=4, sort_keys=True))
+        print("Respond:", dumps(output_json.json, indent=4, sort_keys=True))
+        print("================================================================================")
 
         return output_json
 
