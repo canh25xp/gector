@@ -38,19 +38,22 @@ def predict(lines, model, batch_size=32):
     test_data = [s.strip() for s in lines]
     predictions = []
     batch = []
+    cnt_corrections = 0
     for sent in test_data:
         batch.append(sent.split())
         if len(batch) == batch_size:
-            preds, _ = model.handle_batch(batch)
+            preds, cnt = model.handle_batch(batch)
             predictions.extend(preds)
             batch = []
+            cnt_corrections += cnt
     if batch:
-        preds, _ = model.handle_batch(batch)
+        preds, cnt = model.handle_batch(batch)
         predictions.extend(preds)
+        cnt_corrections += cnt
 
     # output = '<eos>'.join([' '.join(x) for x in predictions])
     output = [" ".join(x) for x in predictions]
-    return output
+    return output, cnt_corrections
 
 
 app = Flask(__name__)
@@ -72,7 +75,7 @@ class MODEL(Resource):
         print("Request:", dumps(json_data, indent=2, sort_keys=True))
 
         if model == "GECToR-Roberta":
-            output = predict(input, model_gector_roberta)
+            output, cnt_corrections = predict(input, model_gector_roberta)
         elif model == "GECToR-XLNet":
             output = ["Unsupported"]
         elif model == "T5-Large":
@@ -90,6 +93,7 @@ class MODEL(Resource):
         # fmt: on
 
         print("Respond:", dumps(output_json.json, indent=4, sort_keys=True))
+        print(f"Produced overall corrections: {cnt_corrections}")
         print("================================================================================")
 
         return output_json
