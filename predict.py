@@ -26,8 +26,12 @@ def predict_for_file(
     if to_normalize:
         result_lines = [normalize(line) for line in result_lines]
 
-    with open(output_file, "w") as f:
-        f.write("\n".join(result_lines) + "\n")
+    if output_file:
+        with open(output_file, "w") as f:
+            f.write("\n".join(result_lines) + "\n")
+    else:
+        print("\n".join(result_lines))
+
     return cnt_corrections
 
 
@@ -76,7 +80,7 @@ if __name__ == "__main__":
         "--input_file", help="Path to the evalset file", required=True
     )
     parser.add_argument(
-        "--output_file", help="Path to the output file", required=True
+        "--output_file", help="Path to the output file", default=None
     )
     parser.add_argument(
         "--max_len",
