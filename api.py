@@ -53,11 +53,7 @@ def predict(lines, model, batch_size=32):
 app = Flask(__name__)
 api = Api(app)
 
-roberta_path = hf_hub_download(
-    repo_id="canh25xp/GECToR-Roberta",
-    filename="roberta_1_gectorv2.th",
-    cache_dir=".cache",
-)
+roberta_path = hf_hub_download(repo_id="canh25xp/GECToR-Roberta", filename="roberta_1_gectorv2.th", cache_dir=".cache")
 
 print(f"roberta_path: {roberta_path}")
 model_gector_roberta = load(str(roberta_path), "roberta")
