@@ -2,6 +2,9 @@ from gector.gec_model import GecBERTModel
 from huggingface_hub import hf_hub_download
 import gradio as gr
 import difflib
+from transformers import logging
+
+logging.set_verbosity_error()
 
 
 def load(model_path, transformer_model):

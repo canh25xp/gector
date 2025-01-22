@@ -1,6 +1,9 @@
 import argparse
 from gector.utils.helpers import read_lines, normalize
 from gector.gec_model import GecBERTModel
+from transformers import logging
+
+logging.set_verbosity_error()
 
 
 def predict_for_file(input_file, output_file, model, batch_size=32, to_normalize=False):
