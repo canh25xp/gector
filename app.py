@@ -2,9 +2,6 @@ from predict import predict, load
 from huggingface_hub import hf_hub_download
 import gradio as gr
 import difflib
-from transformers import logging
-
-logging.set_verbosity_error()
 
 
 def highlight_differences(original, corrected):

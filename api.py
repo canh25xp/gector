@@ -3,9 +3,6 @@ from huggingface_hub import hf_hub_download
 from flask import Flask, jsonify, request
 from flask_restful import Api, Resource
 from json import dumps
-from transformers import logging
-
-logging.set_verbosity_error()
 
 
 app = Flask(__name__)
