@@ -60,9 +60,12 @@ app = Flask(__name__)
 api = Api(app)
 
 roberta_path = hf_hub_download(repo_id="canh25xp/GECToR-Roberta", filename="roberta_1_gectorv2.th", cache_dir=".cache")
+xlnet_path = hf_hub_download(repo_id="canh25xp/GECToR-Roberta", filename="xlnet_0_gectorv2.th", cache_dir=".cache")
 
 print(f"roberta_path: {roberta_path}")
+print(f"xlnet_path: {xlnet_path}")
 model_gector_roberta = load(str(roberta_path), "roberta")
+model_gector_xlnet = load(str(xlnet_path), "xlnet")
 
 
 class MODEL(Resource):
@@ -77,7 +80,7 @@ class MODEL(Resource):
         if model == "GECToR-Roberta":
             output, cnt_corrections = predict(input, model_gector_roberta)
         elif model == "GECToR-XLNet":
-            output = ["Unsupported"]
+            output, cnt_corrections = predict(input, model_gector_xlnet)
         elif model == "T5-Large":
             output = ["Unsupported"]
         else:
