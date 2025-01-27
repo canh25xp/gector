@@ -8,11 +8,20 @@ logging.set_verbosity_error()
 
 
 def load(model_path, transformer_model):
-    special_tokens_fix = 1
-    min_error_prob = 0.50
-    confidence_bias = 0.20
+    if transformer_model == "roberta":
+        special_tokens_fix = 1
+        min_error_prob = 0.50
+        confidence_bias = 0.20
+    elif transformer_model == "xlnet":
+        special_tokens_fix = 0
+        min_error_prob = 0.50
+        confidence_bias = 0.20
+    elif transformer_model == "bert":
+        special_tokens_fix = 0
+        min_error_prob = 0.41
+        confidence_bias = 0.10
 
-    return GecBERTModel(
+    model = GecBERTModel(
         vocab_path="test_fixtures/roberta_model/vocabulary",
         model_paths=[model_path],
         max_len=50,
@@ -25,6 +34,7 @@ def load(model_path, transformer_model):
         log=False,
         confidence=confidence_bias,
     )
+    return model
 
 
 def predict(lines, model, batch_size=32):
@@ -37,8 +47,8 @@ def predict(lines, model, batch_size=32):
         if len(batch) == batch_size:
             preds, cnt = model.handle_batch(batch)
             predictions.extend(preds)
-            cnt_corrections += cnt
             batch = []
+            cnt_corrections += cnt
     if batch:
         preds, cnt = model.handle_batch(batch)
         predictions.extend(preds)
@@ -46,7 +56,8 @@ def predict(lines, model, batch_size=32):
 
     # output = '<eos>'.join([' '.join(x) for x in predictions])
     output = [" ".join(x) for x in predictions]
-    return "\n".join(output)
+    output = "\n".join(output)
+    return output, cnt_corrections
 
 
 def highlight_differences(original, corrected):
@@ -76,22 +87,22 @@ text_input = gr.Textbox(lines=5, label="Input text")
 
 check_box = gr.Checkbox(label="Highlight output")
 
-model_select = gr.Dropdown(["Roberta", "Roberta-Large", "Bert"], label="Select model")
+model_select = gr.Dropdown(["GECToR-Roberta", "GECToR-XLNet", "GECToR-Bert", "Roberta-Large"], label="Select model")
 
 output_text = gr.HTML(label="Output text")
 
 examples = [
     [
         "I seen her at the store yesterday",  # I saw her at the store yesterday
-        "Roberta",
+        "GECToR-Roberta",
     ],
     [
         "We was going to the park when it started to raining",  # We were going to the park when it started to rain
-        "Roberta-Large",
+        "GECToR-XLNet",
     ],
     [
         "She don't like to eat broccoli because they are green",  # She doesn't like to eat broccoli because it is green
-        "Roberta-Large",
+        "GECToR-Bert",
     ],
     [
         "He are one of the best players in the team",  # He is one of the best players on the team
@@ -101,9 +112,7 @@ examples = [
 
 
 if __name__ == "__main__":
-    roberta_path = hf_hub_download(
-        repo_id="canh25xp/GECToR-Roberta", filename="roberta_1_gectorv2.th", cache_dir=".cache"
-    )
+    roberta_path = hf_hub_download(repo_id="canh25xp/GECToR-Roberta", filename="roberta_1_gectorv2.th", cache_dir=".cache")
     xlnet_path = hf_hub_download(repo_id="canh25xp/GECToR-Roberta", filename="xlnet_0_gectorv2.th", cache_dir=".cache")
     bert_path = hf_hub_download(repo_id="canh25xp/GECToR-Roberta", filename="bert_0_gector.th", cache_dir=".cache")
 
@@ -116,6 +125,7 @@ if __name__ == "__main__":
 
     def get_prediction(text, model, highlight):
         output = ""
+        cnt_corrections = 0
         if model == "GECToR-Roberta":
             output, cnt_corrections = predict([text], model_gector_roberta)
         elif model == "GECToR-XLNet":
@@ -123,7 +133,9 @@ if __name__ == "__main__":
         elif model == "GECToR-Bert":
             output, cnt_corrections = predict([text], model_gector_bert)
         else:
-            raise NotImplementedError(f"Model {model} is not recognized.")
+            output = "Model not supported"
+
+        print(f"Produced overall corrections: {cnt_corrections}")
 
         if highlight:
             return highlight_differences(text, output)
