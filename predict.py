@@ -6,24 +6,61 @@ from transformers import logging
 logging.set_verbosity_error()
 
 
-def predict_for_file(input_file, output_file, model, batch_size=32, to_normalize=False):
-    test_data = read_lines(input_file)
+def load(model_path, transformer_model):
+    if transformer_model == "roberta":
+        special_tokens_fix = 1
+        min_error_prob = 0.50
+        confidence_bias = 0.20
+    elif transformer_model == "xlnet":
+        special_tokens_fix = 0
+        min_error_prob = 0.50
+        confidence_bias = 0.20
+    elif transformer_model == "bert":
+        special_tokens_fix = 0
+        min_error_prob = 0.41
+        confidence_bias = 0.10
+
+    model = GecBERTModel(
+        vocab_path="test_fixtures/roberta_model/vocabulary",
+        model_paths=[model_path],
+        max_len=50,
+        min_len=3,
+        iterations=5,
+        min_error_probability=min_error_prob,
+        lowercase_tokens=False,
+        model_name=transformer_model,
+        special_tokens_fix=special_tokens_fix,
+        log=False,
+        confidence=confidence_bias,
+    )
+    return model
+
+
+def predict(lines, model, batch_size=32):
+    test_data = [s.strip() for s in lines]  # Remove trailling spaces
     predictions = []
-    cnt_corrections = 0
     batch = []
+    cnt_corrections = 0
     for sent in test_data:
         batch.append(sent.split())
         if len(batch) == batch_size:
             preds, cnt = model.handle_batch(batch)
             predictions.extend(preds)
-            cnt_corrections += cnt
             batch = []
+            cnt_corrections += cnt
     if batch:
         preds, cnt = model.handle_batch(batch)
         predictions.extend(preds)
         cnt_corrections += cnt
 
     result_lines = [" ".join(x) for x in predictions]
+    return result_lines, cnt_corrections
+
+
+def predict_for_file(input_file, output_file, model, batch_size=32, to_normalize=False):
+    test_data = read_lines(input_file)
+    result_lines, cnt_corrections = predict(test_data, model, batch_size)
+
     if to_normalize:
         result_lines = [normalize(line) for line in result_lines]
 
@@ -138,15 +175,13 @@ if __name__ == "__main__":
     parser.add_argument(
         "--min_error_probability",
         type=float,
-        help="Minimum probability for each action to apply. "
-        "Also, minimum error probability, as described in the paper.",
+        help="Minimum probability for each action to apply. " "Also, minimum error probability, as described in the paper.",
         default=0.0,
     )
     parser.add_argument(
         "--special_tokens_fix",
         type=int,
-        help="Whether to fix problem with [CLS], [SEP] tokens tokenization. "
-        "For reproducing reported results it should be 0 for BERT/XLNet and 1 for RoBERTa.",
+        help="Whether to fix problem with [CLS], [SEP] tokens tokenization. " "For reproducing reported results it should be 0 for BERT/XLNet and 1 for RoBERTa.",
         default=1,
     )
     parser.add_argument("--is_ensemble", type=int, help="Whether to do ensembling.", default=0)

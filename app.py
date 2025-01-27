@@ -1,63 +1,10 @@
-from gector.gec_model import GecBERTModel
+from predict import predict, load
 from huggingface_hub import hf_hub_download
 import gradio as gr
 import difflib
 from transformers import logging
 
 logging.set_verbosity_error()
-
-
-def load(model_path, transformer_model):
-    if transformer_model == "roberta":
-        special_tokens_fix = 1
-        min_error_prob = 0.50
-        confidence_bias = 0.20
-    elif transformer_model == "xlnet":
-        special_tokens_fix = 0
-        min_error_prob = 0.50
-        confidence_bias = 0.20
-    elif transformer_model == "bert":
-        special_tokens_fix = 0
-        min_error_prob = 0.41
-        confidence_bias = 0.10
-
-    model = GecBERTModel(
-        vocab_path="test_fixtures/roberta_model/vocabulary",
-        model_paths=[model_path],
-        max_len=50,
-        min_len=3,
-        iterations=5,
-        min_error_probability=min_error_prob,
-        lowercase_tokens=False,
-        model_name=transformer_model,
-        special_tokens_fix=special_tokens_fix,
-        log=False,
-        confidence=confidence_bias,
-    )
-    return model
-
-
-def predict(lines, model, batch_size=32):
-    test_data = [s.strip() for s in lines]  # Remove trailling spaces
-    predictions = []
-    batch = []
-    cnt_corrections = 0
-    for sent in test_data:
-        batch.append(sent.split())
-        if len(batch) == batch_size:
-            preds, cnt = model.handle_batch(batch)
-            predictions.extend(preds)
-            batch = []
-            cnt_corrections += cnt
-    if batch:
-        preds, cnt = model.handle_batch(batch)
-        predictions.extend(preds)
-        cnt_corrections += cnt
-
-    # output = '<eos>'.join([' '.join(x) for x in predictions])
-    output = [" ".join(x) for x in predictions]
-    output = "\n".join(output)
-    return output, cnt_corrections
 
 
 def highlight_differences(original, corrected):
@@ -134,6 +81,8 @@ if __name__ == "__main__":
             output, cnt_corrections = predict([text], model_gector_bert)
         else:
             output = "Model not supported"
+
+        output = "\n".join(output)
 
         print(f"Produced overall corrections: {cnt_corrections}")
 
