@@ -15,8 +15,12 @@ def load(model_path, transformer_model):
         confidence_bias = 0.20
     elif transformer_model == "xlnet":
         special_tokens_fix = 0
-        min_error_prob = 0.66
-        confidence_bias = 0.35
+        min_error_prob = 0.50
+        confidence_bias = 0.20
+    elif transformer_model == "bert":
+        special_tokens_fix = 0
+        min_error_prob = 0.41
+        confidence_bias = 0.10
 
     model = GecBERTModel(
         vocab_path="test_fixtures/roberta_model/vocabulary",
@@ -61,11 +65,14 @@ api = Api(app)
 
 roberta_path = hf_hub_download(repo_id="canh25xp/GECToR-Roberta", filename="roberta_1_gectorv2.th", cache_dir=".cache")
 xlnet_path = hf_hub_download(repo_id="canh25xp/GECToR-Roberta", filename="xlnet_0_gectorv2.th", cache_dir=".cache")
+bert_path = hf_hub_download(repo_id="canh25xp/GECToR-Roberta", filename="bert_0_gector.th", cache_dir=".cache")
 
 print(f"roberta_path: {roberta_path}")
 print(f"xlnet_path: {xlnet_path}")
+print(f"bert_path: {bert_path}")
 model_gector_roberta = load(str(roberta_path), "roberta")
 model_gector_xlnet = load(str(xlnet_path), "xlnet")
+model_gector_bert = load(str(bert_path), "bert")
 
 
 class MODEL(Resource):
@@ -81,8 +88,8 @@ class MODEL(Resource):
             output, cnt_corrections = predict(input, model_gector_roberta)
         elif model == "GECToR-XLNet":
             output, cnt_corrections = predict(input, model_gector_xlnet)
-        elif model == "T5-Large":
-            output = ["Unsupported"]
+        elif model == "GECToR-Bert":
+            output, cnt_corrections = predict(input, model_gector_bert)
         else:
             raise NotImplementedError(f"Model {model} is not recognized.")
 
