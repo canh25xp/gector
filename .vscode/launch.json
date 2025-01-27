@@ -1,0 +1,24 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python Debugger: Current File with Arguments",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "args": [
+                // "${command:pickArgs}"
+                "--model_path",
+                ".cache/models--canh25xp--GECToR-Roberta/snapshots/f2e1cc8a2e9af792a39267a5063ddc384b245a5d/roberta_1_gectorv2.th",
+                "--input_file",
+                "regression_tests/original/conll14_10.txt",
+                "--output_file",
+                "out.txt"
+            ]
+        }
+    ]
+}
