@@ -1,4 +1,15 @@
 import argparse
+import os
+import sys
+from pathlib import Path
+
+FILE = Path(__file__).resolve()
+ROOT = FILE.parents[0]  # Gector root directory
+if str(ROOT) not in sys.path:
+    sys.path.append(str(ROOT))  # add ROOT to PATH
+ROOT = Path(os.path.relpath(ROOT, Path.cwd()))  # relative
+
+import argparse
 from gector.utils.helpers import read_lines, normalize
 from gector.gec_model import GecBERTModel
 from transformers import logging
@@ -21,7 +32,7 @@ def load(model_path, transformer_model):
         confidence_bias = 0.10
 
     model = GecBERTModel(
-        vocab_path="test_fixtures/roberta_model/vocabulary",
+        vocab_path=ROOT / "test_fixtures/roberta_model/vocabulary",
         model_paths=[model_path],
         max_len=50,
         min_len=3,
