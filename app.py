@@ -57,13 +57,9 @@ def highlight_differences(original, corrected):
     highlighted = []
     for word in diff:
         if word.startswith("+ "):
-            highlighted.append(
-                f"<b><span style='color:green'>{word[2:]}</span></b>"
-            )
+            highlighted.append(f"<b><span style='color:green'>{word[2:]}</span></b>")
         elif word.startswith("- "):
-            highlighted.append(
-                f"<b><span style='color:red'>{word[2:]}</span></b>"
-            )
+            highlighted.append(f"<b><span style='color:red'>{word[2:]}</span></b>")
         elif word.startswith("? "):
             continue
         else:
@@ -80,9 +76,7 @@ text_input = gr.Textbox(lines=5, label="Input text")
 
 check_box = gr.Checkbox(label="Highlight output")
 
-model_select = gr.Dropdown(
-    ["Roberta", "Roberta-Large", "Bert"], label="Select model"
-)
+model_select = gr.Dropdown(["Roberta", "Roberta-Large", "Bert"], label="Select model")
 
 output_text = gr.HTML(label="Output text")
 
@@ -108,26 +102,28 @@ examples = [
 
 if __name__ == "__main__":
     roberta_path = hf_hub_download(
-        repo_id="canh25xp/GECToR-Roberta",
-        filename="roberta_1_gectorv2.th",
-        cache_dir=".cache",
+        repo_id="canh25xp/GECToR-Roberta", filename="roberta_1_gectorv2.th", cache_dir=".cache"
     )
-    # roberta_large_path = hf_hub_download("canh25xp/GECToR-Roberta", "roberta-large_1_pie_1bw_st3.th")
-    # roberta_large_spell_path = hf_hub_download("canh25xp/GECToR-Roberta", "roberta-large-spell50k.th")
-    # bert_path = hf_hub_download("canh25xp/GECToR-Roberta", "bert_0_gector.th")
+    xlnet_path = hf_hub_download(repo_id="canh25xp/GECToR-Roberta", filename="xlnet_0_gectorv2.th", cache_dir=".cache")
+    bert_path = hf_hub_download(repo_id="canh25xp/GECToR-Roberta", filename="bert_0_gector.th", cache_dir=".cache")
 
     print(f"roberta_path: {roberta_path}")
+    print(f"xlnet_path: {xlnet_path}")
+    print(f"bert_path: {bert_path}")
+    model_gector_roberta = load(str(roberta_path), "roberta")
+    model_gector_xlnet = load(str(xlnet_path), "xlnet")
+    model_gector_bert = load(str(bert_path), "bert")
 
-    roberta = load(str(roberta_path), "roberta")
-
-    def get_prediction(text, model_name, highlight):
+    def get_prediction(text, model, highlight):
         output = ""
-        if model_name == "Roberta":
-            output = predict([text], roberta)
-        if model_name == "Roberta-Large":
-            output = "Not supported yet"
-        if model_name == "Bert":
-            output = "Not supported yet"
+        if model == "GECToR-Roberta":
+            output, cnt_corrections = predict([text], model_gector_roberta)
+        elif model == "GECToR-XLNet":
+            output, cnt_corrections = predict([text], model_gector_xlnet)
+        elif model == "GECToR-Bert":
+            output, cnt_corrections = predict([text], model_gector_bert)
+        else:
+            raise NotImplementedError(f"Model {model} is not recognized.")
 
         if highlight:
             return highlight_differences(text, output)
