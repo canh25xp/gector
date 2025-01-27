@@ -43,7 +43,7 @@ class MODEL(Resource):
 
         output_json = jsonify({"model": model, "text_output_list": output})
 
-        print("Respond:", dumps(output_json.json, indent=4, sort_keys=True))
+        print("Respond:", dumps(output_json.json, indent=2, sort_keys=True))
         print(f"Produced overall corrections: {cnt_corrections}")
         print("================================================================================")
 
