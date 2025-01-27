@@ -129,13 +129,13 @@ def main():
         min_len=3,
         iterations=5,
         min_error_probability=0.0,
-        lowercase_tokens=0,
+        lowercase_tokens=False,
         model_name="roberta",
         special_tokens_fix=1,
         log=False,
         confidence=0,
         del_confidence=0,
-        is_ensemble=0,
+        is_ensemble=False,
         weights=None,
     )
 
