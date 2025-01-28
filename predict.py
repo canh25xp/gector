@@ -9,7 +9,6 @@ if str(ROOT) not in sys.path:
     sys.path.append(str(ROOT))  # add ROOT to PATH
 ROOT = Path(os.path.relpath(ROOT, Path.cwd()))  # relative
 
-import argparse
 from gector.utils.helpers import read_lines, normalize
 from gector.gec_model import GecBERTModel
 from transformers import logging
