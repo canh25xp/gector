@@ -29,7 +29,7 @@ class MODEL(Resource):
         print("================================================================================")
         print("Request:", dumps(json_data, indent=2, sort_keys=True))
 
-        output = ""
+        output = []
         cnt_corrections = 0
         if model == "GECToR-Roberta":
             output, cnt_corrections = predict(input, model_gector_roberta)
