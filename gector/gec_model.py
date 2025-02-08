@@ -38,7 +38,7 @@ class GecBERTModel(object):
         special_tokens_fix=1,
         is_ensemble=True,
         min_error_probability=0.0,
-        confidence=0,
+        confidence=0.0,
         del_confidence=0,
         resolve_cycles=False,
     ):
