@@ -5,4 +5,4 @@ transformers
 scikit-learn
 sentencepiece
 overrides
-numpy
+numpy<=1.26.4
