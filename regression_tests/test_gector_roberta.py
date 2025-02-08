@@ -1,3 +1,20 @@
+import os
+import sys
+from pathlib import Path
+
+FILE = Path(__file__).resolve()
+CWD = FILE.parents[0]
+ROOT = FILE.parents[1]  # Gector root directory
+if str(ROOT) not in sys.path:
+    sys.path.append(str(ROOT))  # add ROOT to PATH
+ROOT = Path(os.path.relpath(ROOT, Path.cwd()))  # relative
+
+ORIG_FILE_DIR = CWD / "original"
+GOLD_FILE_DIR = CWD / "prediction"
+TEST_FIXTURES_DIR_PATH = ROOT / "test_fixtures"
+VOCAB_PATH = ROOT / "test_fixtures/roberta_model/vocabulary"
+MODEL_URL = "https://grammarly-nlp-data-public.s3.amazonaws.com/gector/roberta_1_gectorv2.th"
+
 import filecmp
 from pathlib import Path
 import requests
@@ -6,12 +23,7 @@ from tqdm import tqdm
 
 from gector.gec_model import GecBERTModel
 from gector.utils.helpers import read_lines
-
-ORIG_FILE_DIR = Path(__file__).parent / "original"
-GOLD_FILE_DIR = Path(__file__).parent / "prediction"
-TEST_FIXTURES_DIR_PATH = Path(__file__).parent.parent / "test_fixtures"
-VOCAB_PATH = TEST_FIXTURES_DIR_PATH.joinpath("roberta_model/vocabulary")
-MODEL_URL = "https://grammarly-nlp-data-public.s3.amazonaws.com/gector/roberta_1_gectorv2.th"
+from huggingface_hub import hf_hub_download
 
 
 def download_weights():
@@ -117,9 +129,8 @@ def predict_and_compare(model):
 
 
 def main():
-
-    # Download weights from S3
-    model_path = download_weights()
+    model_path = hf_hub_download(repo_id="canh25xp/GECToR-Roberta", filename="roberta_1_gectorv2.th", cache_dir=ROOT / ".cache")
+    print(f"roberta_path: {model_path}")
 
     # Initialize model
     model = GecBERTModel(
@@ -129,13 +140,13 @@ def main():
         min_len=3,
         iterations=5,
         min_error_probability=0.0,
-        lowercase_tokens=0,
+        lowercase_tokens=False,
         model_name="roberta",
         special_tokens_fix=1,
         log=False,
         confidence=0,
         del_confidence=0,
-        is_ensemble=0,
+        is_ensemble=False,
         weights=None,
     )
 
